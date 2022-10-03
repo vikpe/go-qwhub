@@ -11,14 +11,14 @@ import (
 	"github.com/vikpe/serverstat/qserver/mvdsv"
 )
 
-func TestClient_GetMvdsvServers(t *testing.T) {
+func TestClient_MvdsvServers(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		hub := qwhub.NewClient()
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
 		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/servers/mvdsv", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
-		servers := hub.GetMvdsvServers()
+		servers := hub.MvdsvServers()
 
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
 		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/servers/mvdsv"])
@@ -44,7 +44,7 @@ func TestClient_GetMvdsvServers(t *testing.T) {
 				},
 			)
 
-			assert.Equal(t, servers, hub.GetMvdsvServers())
+			assert.Equal(t, servers, hub.MvdsvServers())
 		})
 
 		t.Run("with params", func(t *testing.T) {
@@ -53,20 +53,20 @@ func TestClient_GetMvdsvServers(t *testing.T) {
 			defer httpmock.DeactivateAndReset()
 			httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/servers/mvdsv?foo=1", httpmock.NewStringResponder(http.StatusOK, `[]`))
 
-			hub.GetMvdsvServers(map[string]string{"foo": "1"})
+			hub.MvdsvServers(map[string]string{"foo": "1"})
 			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/servers/mvdsv?foo=1"])
 		})
 	})
 }
 
-func TestClient_GetStreams(t *testing.T) {
+func TestClient_Streams(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		hub := qwhub.NewClient()
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
 		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/streams", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
-		streams := hub.GetStreams()
+		streams := hub.Streams()
 
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
 		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/streams"])
@@ -90,6 +90,6 @@ func TestClient_GetStreams(t *testing.T) {
 			},
 		)
 
-		assert.Equal(t, streams, hub.GetStreams())
+		assert.Equal(t, streams, hub.Streams())
 	})
 }

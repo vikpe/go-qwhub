@@ -19,7 +19,7 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) GetMvdsvServers(queryParams ...map[string]string) []mvdsv.Mvdsv {
+func (c *Client) MvdsvServers(queryParams ...map[string]string) []mvdsv.Mvdsv {
 	req := c.RestyClient.R().SetResult([]mvdsv.Mvdsv{})
 
 	if len(queryParams) > 0 {
@@ -36,7 +36,7 @@ func (c *Client) GetMvdsvServers(queryParams ...map[string]string) []mvdsv.Mvdsv
 	return *servers
 }
 
-func (c *Client) GetStreams() []types.TwitchStream {
+func (c *Client) Streams() []types.TwitchStream {
 	req := c.RestyClient.R().SetResult([]types.TwitchStream{})
 	res, err := req.Get("streams")
 
