@@ -2,6 +2,7 @@ package qwhub
 
 import (
 	"github.com/go-resty/resty/v2"
+	"github.com/vikpe/qw-hub-api/types"
 	"github.com/vikpe/serverstat/qserver/mvdsv"
 )
 
@@ -33,4 +34,16 @@ func (c *Client) GetMvdsvServers(queryParams ...map[string]string) []mvdsv.Mvdsv
 
 	servers := resp.Result().(*[]mvdsv.Mvdsv)
 	return *servers
+}
+
+func (c *Client) GetStreams() []types.TwitchStream {
+	req := c.RestyClient.R().SetResult([]types.TwitchStream{})
+	res, err := req.Get("streams")
+
+	if err != nil || res.IsError() {
+		return make([]types.TwitchStream, 0)
+	}
+
+	streams := res.Result().(*[]types.TwitchStream)
+	return *streams
 }

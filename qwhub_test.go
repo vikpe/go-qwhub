@@ -7,11 +7,11 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vikpe/go-qwhub"
+	"github.com/vikpe/qw-hub-api/types"
 	"github.com/vikpe/serverstat/qserver/mvdsv"
 )
 
 func TestClient_GetMvdsvServers(t *testing.T) {
-
 	t.Run("error", func(t *testing.T) {
 		hub := qwhub.NewClient()
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
@@ -56,5 +56,40 @@ func TestClient_GetMvdsvServers(t *testing.T) {
 			hub.GetMvdsvServers(map[string]string{"foo": "1"})
 			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/servers/mvdsv?foo=1"])
 		})
+	})
+}
+
+func TestClient_GetStreams(t *testing.T) {
+	t.Run("error", func(t *testing.T) {
+		hub := qwhub.NewClient()
+		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+
+		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/streams", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
+		streams := hub.GetStreams()
+
+		assert.Equal(t, 1, httpmock.GetTotalCallCount())
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/streams"])
+		assert.Empty(t, streams)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		hub := qwhub.NewClient()
+		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+
+		streams := []types.TwitchStream{
+			{Title: "awesome stream 1"},
+			{Title: "awesome stream 2"},
+		}
+
+		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/streams",
+			func(req *http.Request) (*http.Response, error) {
+				resp, _ := httpmock.NewJsonResponse(http.StatusOK, streams)
+				return resp, nil
+			},
+		)
+
+		assert.Equal(t, streams, hub.GetStreams())
 	})
 }
