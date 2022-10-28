@@ -7,7 +7,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vikpe/go-qwhub"
-	"github.com/vikpe/qw-hub-api/types"
+	"github.com/vikpe/qw-hub-api/pkg/twitch"
 	"github.com/vikpe/serverstat/qserver/mvdsv"
 )
 
@@ -78,7 +78,7 @@ func TestClient_Streams(t *testing.T) {
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
-		streams := []types.TwitchStream{
+		streams := []twitch.Stream{
 			{Title: "awesome stream 1"},
 			{Title: "awesome stream 2"},
 		}
