@@ -3,10 +3,12 @@ package qwhub_test
 import (
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vikpe/go-qwhub"
+	"github.com/vikpe/qw-hub-api/pkg/qtvscraper"
 	"github.com/vikpe/qw-hub-api/pkg/twitch"
 	"github.com/vikpe/serverstat/qserver/mvdsv"
 )
@@ -91,5 +93,55 @@ func TestClient_Streams(t *testing.T) {
 		)
 
 		assert.Equal(t, streams, hub.Streams())
+	})
+}
+
+func TestClient_Demos(t *testing.T) {
+	t.Run("error", func(t *testing.T) {
+		hub := qwhub.NewClient()
+		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+
+		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
+		streams := hub.Demos()
+
+		assert.Equal(t, 1, httpmock.GetTotalCallCount())
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/demos"])
+		assert.Empty(t, streams)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		hub := qwhub.NewClient()
+		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+
+		demos := []qtvscraper.Demo{
+			{
+				QtvAddress:  "qw.foppa.dk:28000",
+				Time:        time.Time{},
+				Filename:    "2on2_foo_vs_bar[dm2]220101-1042",
+				DownloadUrl: "http://qw.foppa.dk:28000/dl/demos/2on2_foo_vs_bar[dm2]220101-1042",
+				QtvplayUrl:  "file:2on2_foo_vs_bar[dm2]220101-1042@qw.foppa.dk:28000",
+			},
+		}
+
+		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos",
+			func(req *http.Request) (*http.Response, error) {
+				resp, _ := httpmock.NewJsonResponse(http.StatusOK, demos)
+				return resp, nil
+			},
+		)
+
+		assert.Equal(t, demos, hub.Demos())
+	})
+
+	t.Run("with params", func(t *testing.T) {
+		hub := qwhub.NewClient()
+		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos?mode=2on2", httpmock.NewStringResponder(http.StatusOK, `[]`))
+
+		hub.Demos(map[string]string{"mode": "2on2"})
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/demos?mode=2on2"])
 	})
 }
