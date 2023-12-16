@@ -13,7 +13,7 @@ type Client struct {
 
 func NewClient() *Client {
 	restyClient := resty.New()
-	restyClient.SetBaseURL("https://hubapi.quakeworld.nu/v2")
+	restyClient.SetBaseURL("https://hubapi.quake.world/v2")
 
 	return &Client{
 		RestyClient: restyClient,

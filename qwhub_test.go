@@ -19,11 +19,11 @@ func TestClient_MvdsvServers(t *testing.T) {
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/servers/mvdsv", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/servers/mvdsv", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
 		servers := hub.MvdsvServers()
 
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
-		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/servers/mvdsv"])
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quake.world/v2/servers/mvdsv"])
 		assert.Empty(t, servers)
 	})
 
@@ -39,7 +39,7 @@ func TestClient_MvdsvServers(t *testing.T) {
 				{Address: "qw.foppa.dk:28503"},
 			}
 
-			httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/servers/mvdsv",
+			httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/servers/mvdsv",
 				func(req *http.Request) (*http.Response, error) {
 					resp, _ := httpmock.NewJsonResponse(http.StatusOK, servers)
 					return resp, nil
@@ -53,10 +53,10 @@ func TestClient_MvdsvServers(t *testing.T) {
 			hub := qwhub.NewClient()
 			httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 			defer httpmock.DeactivateAndReset()
-			httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/servers/mvdsv?foo=1", httpmock.NewStringResponder(http.StatusOK, `[]`))
+			httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/servers/mvdsv?foo=1", httpmock.NewStringResponder(http.StatusOK, `[]`))
 
 			hub.MvdsvServers(map[string]string{"foo": "1"})
-			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/servers/mvdsv?foo=1"])
+			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quake.world/v2/servers/mvdsv?foo=1"])
 		})
 	})
 }
@@ -67,11 +67,11 @@ func TestClient_Streams(t *testing.T) {
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/streams", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/streams", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
 		streams := hub.Streams()
 
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
-		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/streams"])
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quake.world/v2/streams"])
 		assert.Empty(t, streams)
 	})
 
@@ -85,7 +85,7 @@ func TestClient_Streams(t *testing.T) {
 			{Title: "awesome stream 2"},
 		}
 
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/streams",
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/streams",
 			func(req *http.Request) (*http.Response, error) {
 				resp, _ := httpmock.NewJsonResponse(http.StatusOK, streams)
 				return resp, nil
@@ -102,11 +102,11 @@ func TestClient_Demos(t *testing.T) {
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/demos", httpmock.NewStringResponder(http.StatusServiceUnavailable, ``))
 		streams := hub.Demos()
 
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
-		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/demos"])
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quake.world/v2/demos"])
 		assert.Empty(t, streams)
 	})
 
@@ -125,7 +125,7 @@ func TestClient_Demos(t *testing.T) {
 			},
 		}
 
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos",
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/demos",
 			func(req *http.Request) (*http.Response, error) {
 				resp, _ := httpmock.NewJsonResponse(http.StatusOK, demos)
 				return resp, nil
@@ -139,9 +139,9 @@ func TestClient_Demos(t *testing.T) {
 		hub := qwhub.NewClient()
 		httpmock.ActivateNonDefault(hub.RestyClient.GetClient())
 		defer httpmock.DeactivateAndReset()
-		httpmock.RegisterResponder("GET", "https://hubapi.quakeworld.nu/v2/demos?mode=2on2", httpmock.NewStringResponder(http.StatusOK, `[]`))
+		httpmock.RegisterResponder("GET", "https://hubapi.quake.world/v2/demos?mode=2on2", httpmock.NewStringResponder(http.StatusOK, `[]`))
 
 		hub.Demos(map[string]string{"mode": "2on2"})
-		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quakeworld.nu/v2/demos?mode=2on2"])
+		assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET https://hubapi.quake.world/v2/demos?mode=2on2"])
 	})
 }
